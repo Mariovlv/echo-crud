@@ -10,11 +10,11 @@ import (
 // Album model
 type Album struct {
 	gorm.Model
-	ID     string    `gorm:"type:uuid;primaryKey"`
-	Title  string    `gorm:"type:varchar(100);not null"`
-	Artist string    `gorm:"type:varchar(100);not null"`
-	Date   time.Time `gorm:"type:date"`
-	Users  []*User   `gorm:"many2many:user_albums;"`
+	ID     string    `gorm:"type:uuid;primaryKey" json:"id"`
+	Title  string    `gorm:"type:varchar(100);not null" json:"title"`
+	Artist string    `gorm:"type:varchar(100);not null" json:"artist"`
+	Date   time.Time `gorm:"type:date" json:"date"`
+	Users  []*User   `gorm:"many2many:user_albums;" json:"users"`
 }
 
 // BeforeSave hook to enforce character limit on Title and Artist

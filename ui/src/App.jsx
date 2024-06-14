@@ -9,6 +9,7 @@ function App() {
     const fetchAlbums = async () => {
       try {
         const response = await getAlbums();
+        console.log(response.data);
         setAlbums(response.data);
       } catch (error) {
         console.error("error fetching albums:", error);

@@ -1,37 +1,51 @@
 package controllers
 
 import (
+	"encoding/json"
+	"mariovlv/echo-golang/initializers"
 	"mariovlv/echo-golang/models"
 	"net/http"
-	"time"
 
 	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
 )
 
-var albums = []models.Album{
-	{ID: uuid.New().String(), Title: "Amnesiac", Artist: "Radiohead", Date: time.Date(2001, time.May, 30, 0, 0, 0, 0, time.UTC)},
-	{ID: uuid.New().String(), Title: "In Rainbows", Artist: "Radiohead", Date: time.Date(2001, time.May, 30, 0, 0, 0, 0, time.UTC)},
-	{ID: uuid.New().String(), Title: "OK Computer", Artist: "Radiohead", Date: time.Date(2001, time.May, 30, 0, 0, 0, 0, time.UTC)},
-	{ID: uuid.New().String(), Title: "Kid A", Artist: "Radiohead", Date: time.Date(2001, time.May, 30, 0, 0, 0, 0, time.UTC)},
-	{ID: uuid.New().String(), Title: "The Bends", Artist: "Radiohead", Date: time.Date(2001, time.May, 30, 0, 0, 0, 0, time.UTC)},
-	// Add more albums with random IDs
+func GetAlbums(c echo.Context) error {
+	var albums []models.Album
+
+	if err := initializers.DB.Find(&albums).Error; err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{"error": "Failed to retrieve albums"})
+	}
+
+	return c.JSON(http.StatusOK, albums)
 }
 
-func GetAlbums(c echo.Context) error {
-	return c.JSON(http.StatusOK, albums)
+func PostAlbum(c echo.Context) error {
+	var album models.Album
+	json.NewDecoder(c.Request().Body).Decode(&album)
+
+	initializers.DB.Create(&album)
+
+	return c.JSON(http.StatusCreated, album)
 }
 
 func GetAlbumByID(c echo.Context) error {
 	id := c.Param("id")
-	for _, album := range albums {
-		if album.ID == id {
-			return c.JSON(http.StatusOK, album)
-		}
+
+	if _, err := uuid.Parse(id); err != nil {
+		return c.JSON(http.StatusBadRequest, map[string]string{"error": "Invalid album ID"})
 	}
-	return c.JSON(http.StatusBadRequest, map[string]string{"error": "Album not found"})
+
+	var album models.Album
+
+	if err := initializers.DB.Where("id = ?", id).First(&album).Error; err != nil {
+		if err.Error() == "record not found" {
+			return c.JSON(http.StatusNotFound, map[string]string{"error": "Album not found"})
+		}
+		return c.JSON(http.StatusInternalServerError, map[string]string{"error": "Failed to retrieve album"})
+	}
+
+	return c.JSON(http.StatusOK, album)
 }
 
-func DeleteUser() {}
-
-func CreateUser() {}
+func DeleteAlbumById() {}
