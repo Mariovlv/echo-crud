@@ -1,23 +1,28 @@
 package main
 
 import (
+	"mariovlv/echo-golang/initializers"
+	"mariovlv/echo-golang/models"
 	"mariovlv/echo-golang/routes"
 
 	"github.com/labstack/echo/v4"
 	prettylogger "github.com/rdbell/echo-pretty-logger"
 )
 
+func init() {
+	initializers.LoadEnvVariables()
+	initializers.DBConnection()
+	initializers.DB.AutoMigrate(models.Album{})
+	initializers.DB.AutoMigrate(models.User{})
+}
+
 func main() {
 	e := echo.New()
-
-	// Serve static files from the "dist" directory
 	e.Static("/", "ui/dist")
 
-	// Middlewares
 	e.Use(prettylogger.Logger)
 
-	e.GET("api/v1/albums", routes.GetAlbums)
-	e.GET("api/v1/albums/:id", routes.GetAlbumByID)
+	routes.InitRoutes(e)
 
 	e.Start(":8080")
 }
