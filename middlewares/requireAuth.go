@@ -27,15 +27,15 @@ func RequireAuth(next echo.HandlerFunc) echo.HandlerFunc {
 				return nil, echo.NewHTTPError(http.StatusUnauthorized, "Unexpected signing method")
 			}
 			// Return the secret signing key
-			return os.Getenv("SECRET"), nil
+			return []byte(os.Getenv("SECRET")), nil
 		})
 
 		if err != nil {
 			return echo.NewHTTPError(http.StatusUnauthorized, "Invalid token")
 		}
 
-		// Check the exp and other claims
 		if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
+			// Check the exp and other claims
 			exp := claims["exp"].(float64)
 			if time.Now().Unix() > int64(exp) {
 				return echo.NewHTTPError(http.StatusUnauthorized, "Token has expired")

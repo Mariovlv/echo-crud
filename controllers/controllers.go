@@ -90,14 +90,13 @@ func CreateUser(c echo.Context) error {
 }
 
 func Login(c echo.Context) error {
-	// get user email and password
 	var body struct {
 		Email    string
 		Password string
 	}
 
 	if c.Bind(&body) != nil {
-		return c.String(http.StatusBadRequest, "Error to read the body")
+		return c.String(http.StatusBadRequest, "Error to read the email and password")
 	}
 
 	// loog up request user in DB
@@ -130,10 +129,11 @@ func Login(c echo.Context) error {
 
 	helpers.WriteCookie(c, tokenString)
 
-	// repsonse, send it back
 	return c.String(http.StatusCreated, "User authenticated correctly")
 }
 
 func Validate(c echo.Context) error {
+	fmt.Println(c)
+
 	return c.String(http.StatusOK, "Im logged in")
 }
