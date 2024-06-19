@@ -1,16 +1,28 @@
 import React, { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
-import { getAlbumById } from "../api/albums";
+import { Link, useParams } from "react-router-dom";
+import {
+  getAlbumById,
+  getLikedByAlbumID,
+  insertLikeToAlbumByIDs,
+} from "../api/albums";
+import Unauthorized from "../components/Unauthorized";
+import ButtonLike from "../components/ButtonLike";
+import AlbumLikesBy from "../components/AlbumLikesBy";
 
 const AlbumDetails = () => {
   const { id } = useParams();
   const [album, setAlbum] = useState(null);
+  const [users, setUsers] = useState();
 
   useEffect(() => {
     const fetchAlbum = async () => {
       try {
         const response = await getAlbumById(id);
+        const respAlbums = await getLikedByAlbumID(id);
+        console.log(respAlbums.data);
         setAlbum(response.data);
+        setUsers(respAlbums.data);
+        console.log(users);
       } catch (error) {
         console.error("Error fetching album:", error);
       }
@@ -20,14 +32,29 @@ const AlbumDetails = () => {
   }, [id]);
 
   if (!album) {
-    return <div>Loading...</div>;
+    return <Unauthorized />;
   }
 
+  const likeAlbum = () => {
+    console.log("you liked album with id", album.id);
+  };
+
   return (
-    <ul className="flex flex-col m-3 font-mono">
-      <li className="text-xl text-stone-700">ID {album.id}</li>
-      <li className="text-4xl font-bold">{album.title}</li>
-      <li className="text-xl text-stone-800">{album.artist}</li>
+    <ul className="flex flex-col p-5 m-3 font-mono bg-white rounded-lg shadow-lg">
+      <div className="mb-4">
+        <li className="text-lg text-gray-600">ID: {album.id}</li>
+        <li className="text-2xl font-bold text-gray-900">{album.title}</li>
+        <li className="text-lg text-gray-700">{album.artist}</li>
+      </div>
+      <div className="flex space-x-3 mb-5">
+        <ButtonLike
+          isLikedByUser={false}
+          likeAlbum={insertLikeToAlbumByIDs}
+          albumID={id}
+          userID={4}
+        />
+      </div>
+      <AlbumLikesBy users={users} />
     </ul>
   );
 };

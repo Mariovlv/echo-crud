@@ -5,6 +5,7 @@ import "./index.css";
 
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import AlbumDetails from "./routes/AlbumDetails.jsx";
+import LoginForm from "./routes/LoginForm.jsx";
 
 const router = createBrowserRouter([
   {
@@ -14,6 +15,10 @@ const router = createBrowserRouter([
   {
     path: "/albums/:id",
     element: <AlbumDetails />,
+  },
+  {
+    path: "/login",
+    element: <LoginForm />,
   },
 ]);
 

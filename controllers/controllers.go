@@ -14,7 +14,22 @@ import (
 	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
 	"golang.org/x/crypto/bcrypt"
+	"gorm.io/gorm"
 )
+
+func GetUserByID(c echo.Context) error {
+	userID := c.Param("id")
+
+	var user models.User
+	if err := initializers.DB.Preload("Albums").First(&user, "id = ?", userID).Error; err != nil {
+		if err == gorm.ErrRecordNotFound {
+			return c.JSON(http.StatusNotFound, map[string]string{"message": "User not found"})
+		}
+		return c.JSON(http.StatusInternalServerError, map[string]string{"message": "Internal server error"})
+	}
+
+	return c.JSON(http.StatusOK, user)
+}
 
 func GetAlbums(c echo.Context) error {
 	//helpers.WriteCookie(c)
@@ -136,4 +151,42 @@ func Validate(c echo.Context) error {
 	fmt.Println(c)
 
 	return c.String(http.StatusOK, "Im logged in")
+}
+
+// GET
+func GetAlbumsLikedBy(c echo.Context) error {
+	var album models.Album
+	albumID := c.Param("id")
+
+	if err := initializers.DB.Preload("Users").First(&album, "id = ?", albumID).Error; err != nil {
+		return c.JSON(http.StatusNotFound, map[string]string{"message": "Album not found"})
+	}
+
+	return c.JSON(http.StatusOK, album.Users)
+}
+
+// POST
+func LikeAlbumBy(c echo.Context) error {
+	var user models.User
+	var album models.Album
+
+	userID := c.Param("user_id")
+	albumID := c.Param("album_id")
+
+	// Find the user by ID
+	if err := initializers.DB.First(&user, "id = ?", userID).Error; err != nil {
+		return c.JSON(http.StatusNotFound, map[string]string{"message": "User not found"})
+	}
+
+	// Find the album by ID
+	if err := initializers.DB.First(&album, "id = ?", albumID).Error; err != nil {
+		return c.JSON(http.StatusNotFound, map[string]string{"message": "Album not found"})
+	}
+
+	// Append the album to the user's liked albums
+	if err := initializers.DB.Model(&user).Association("LikedAlbums").Append(&album).Error; err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{"message": "Could not like album"})
+	}
+
+	return c.JSON(http.StatusOK, map[string]string{"message": "Album liked successfully"})
 }

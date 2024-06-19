@@ -10,8 +10,22 @@ const getAlbumById = (id) => {
   return axios.get(`${BASE_URL}/albums/${id}`);
 };
 
-const postAlbum = ({ album }) => {
-  return axios.post(`${BASE_URL}/albums`, album);
+const getLikedByAlbumID = (albumid) => {
+  return axios.get(`${BASE_URL}/likedby/${albumid}`);
 };
 
-export { getAlbums, getAlbumById };
+const getUserByID = (userid) => {
+  return axios.get(`${BASE_URL}/users/${userid}`);
+};
+
+const insertLikeToAlbumByIDs = (userID, albumID) => {
+  return axios.get(`${BASE_URL}/likedby/${userID}/${albumID}`);
+};
+
+export {
+  getAlbums,
+  getAlbumById,
+  getLikedByAlbumID,
+  getUserByID,
+  insertLikeToAlbumByIDs,
+};
