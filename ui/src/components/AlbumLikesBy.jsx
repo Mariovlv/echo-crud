@@ -1,5 +1,3 @@
-import React from "react";
-
 export default function AlbumLikesBy({ users }) {
   return (
     <div className="p-4 m-3 bg-white rounded-lg shadow-lg">

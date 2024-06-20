@@ -24,7 +24,8 @@ func InitRoutes(e *echo.Echo) {
 	apiV1.GET("/albums/:id", controllers.GetAlbumByID, middlewares.RequireAuth) // Get album by ID endpoint
 
 	// Liked by routes
-	apiV1.GET("/likedby/:id", controllers.GetAlbumsLikedBy)                  // Get liked albums endpoint
+	// unused
+	apiV1.GET("/likedby/:id", controllers.GetAlbumsLikedBy)                  // Get users that liked this album endpoint
 	apiV1.POST("/likedby", controllers.LikeAlbumBy, middlewares.RequireAuth) // Like album endpoint
 
 	// User profile route

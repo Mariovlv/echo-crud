@@ -1,14 +1,13 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import { UserProvider } from "../context/UserContext"; // Import the UserProvider
 import "./index.css";
 
 // Route components
 import App from "./App.jsx";
-import RouteAlbumDetails from "./routes/RouteAlbumDetails.jsx";
-import RouteLoginForm from "./routes/RouteLoginForm.jsx";
-import RouteSignUp from "./routes/RouteSignUp.jsx";
+import AlbumDetail from "./routes/AlbumDetail.jsx";
+import Login from "./routes/Login.jsx";
+import Register from "./routes/Register.jsx";
 
 const router = createBrowserRouter([
   {
@@ -17,22 +16,20 @@ const router = createBrowserRouter([
   },
   {
     path: "/albums/:id",
-    element: <RouteAlbumDetails />,
+    element: <AlbumDetail />,
   },
   {
     path: "/login",
-    element: <RouteLoginForm />,
+    element: <Login />,
   },
   {
     path: "/signup",
-    element: <RouteSignUp />,
+    element: <Register />,
   },
 ]);
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
-    <UserProvider>
-      <RouterProvider router={router} />
-    </UserProvider>
+    <RouterProvider router={router} />
   </React.StrictMode>
 );

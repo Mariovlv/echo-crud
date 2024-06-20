@@ -60,7 +60,7 @@ func GetAlbumByID(c echo.Context) error {
 
 	var album models.Album
 
-	if err := initializers.DB.Where("id = ?", id).First(&album).Error; err != nil {
+	if err := initializers.DB.Preload("Users").Where("id = ?", id).First(&album).Error; err != nil {
 		if err.Error() == "record not found" {
 			return c.JSON(http.StatusNotFound, map[string]string{"error": "Album not found"})
 		}
@@ -153,7 +153,7 @@ func Validate(c echo.Context) error {
 	return c.String(http.StatusOK, "Im logged in")
 }
 
-// GET
+// deprecated
 func GetAlbumsLikedBy(c echo.Context) error {
 	var album models.Album
 	albumID := c.Param("id")

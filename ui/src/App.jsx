@@ -1,47 +1,35 @@
-import React, { useEffect, useState, useContext } from "react";
+import { useEffect, useState } from "react";
 import { getAlbums } from "./api/albums";
 import AlbumList from "./components/AlbumList";
-import Unauthorized from "./components/Unauthorized";
-import Navbar from "./components/Navbar";
-import UserContext from "../context/UserContext"; // Check the correct path to UserContext
 
-function App() {
+const App = () => {
   const [albums, setAlbums] = useState([]);
-  const [isUnauthorized, setIsUnauthorized] = useState(false);
-  const { userId } = useContext(UserContext);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     const fetchAlbums = async () => {
       try {
-        console.log(userId);
         const response = await getAlbums();
-        if (response.status === 401) {
-          setIsUnauthorized(true);
-        } else {
-          setAlbums(response.data);
-        }
-      } catch (error) {
-        if (error.response && error.response.status === 401) {
-          setIsUnauthorized(true);
-        } else {
-          console.error("Failed to fetch albums", error);
-        }
+        setAlbums(response.data);
+        setLoading(false);
+      } catch (err) {
+        setError(err);
+        setLoading(false);
       }
     };
 
     fetchAlbums();
-  }, [userId]); // Add userId to the dependency array
+  }, []);
 
-  if (isUnauthorized) {
-    return <Unauthorized />;
-  }
+  if (loading) return <p>Loading...</p>;
+  if (error) return <p>Error: {error.message}</p>;
 
   return (
-    <div>
-      <Navbar userID={userId} />
+    <div className="min-h-screen bg-gray-100 flex items-center justify-center">
       <AlbumList albums={albums} />
     </div>
   );
-}
+};
 
 export default App;

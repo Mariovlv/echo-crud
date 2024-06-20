@@ -6,7 +6,7 @@ const AlbumItem = ({ album }) => {
     <Link to={`/albums/${album.id}`}>
       <li
         className="flex justify-between items-center border-2 hover:bg-stone-100 border-stone-400 p-3 m-2 rounded-md"
-        key={album.ID}
+        key={album.id}
       >
         <div className="flex flex-col">
           <h2 className="font-bold text-lg">{album.title}</h2>

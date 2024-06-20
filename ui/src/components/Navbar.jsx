@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { getUserByID } from "../api/albums";
+import { getUserByID } from "../api/users";
 
 function Navbar({ userID }) {
   const [userInfo, setUserInfo] = useState({ id: "", email: "" }); // Initialize userInfo as an object
