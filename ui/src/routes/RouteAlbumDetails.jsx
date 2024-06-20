@@ -9,7 +9,7 @@ import Unauthorized from "../components/Unauthorized";
 import ButtonLike from "../components/ButtonLike";
 import AlbumLikesBy from "../components/AlbumLikesBy";
 
-const AlbumDetails = () => {
+const RouteAlbumDetails = () => {
   const { id } = useParams();
   const [album, setAlbum] = useState(null);
   const [users, setUsers] = useState();
@@ -59,4 +59,4 @@ const AlbumDetails = () => {
   );
 };
 
-export default AlbumDetails;
+export default RouteAlbumDetails;

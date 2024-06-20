@@ -15,11 +15,15 @@ const getLikedByAlbumID = (albumid) => {
 };
 
 const getUserByID = (userid) => {
+  console.log(userid);
   return axios.get(`${BASE_URL}/users/${userid}`);
 };
 
 const insertLikeToAlbumByIDs = (userID, albumID) => {
-  return axios.get(`${BASE_URL}/likedby/${userID}/${albumID}`);
+  return axios.post(`${BASE_URL}/likedby`, {
+    user_id: userID,
+    album_id: albumID,
+  });
 };
 
 export {

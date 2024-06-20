@@ -165,28 +165,70 @@ func GetAlbumsLikedBy(c echo.Context) error {
 	return c.JSON(http.StatusOK, album.Users)
 }
 
-// POST
+type LikeAlbumRequest struct {
+	UserID  string `json:"user_id"`
+	AlbumID string `json:"album_id"`
+}
+
 func LikeAlbumBy(c echo.Context) error {
-	var user models.User
-	var album models.Album
+	var req LikeAlbumRequest
 
-	userID := c.Param("user_id")
-	albumID := c.Param("album_id")
+	// Parse the request body
+	if err := c.Bind(&req); err != nil {
+		return c.JSON(http.StatusBadRequest, map[string]string{"message": "Invalid request body"})
+	}
 
-	// Find the user by ID
-	if err := initializers.DB.First(&user, "id = ?", userID).Error; err != nil {
+	// Validate userID and albumID
+	if req.UserID == "" || req.AlbumID == "" {
+		return c.JSON(http.StatusBadRequest, map[string]string{"message": "Invalid user ID or album ID"})
+	}
+
+	user, err := findUserByID(req.UserID)
+	if err != nil {
 		return c.JSON(http.StatusNotFound, map[string]string{"message": "User not found"})
 	}
 
-	// Find the album by ID
-	if err := initializers.DB.First(&album, "id = ?", albumID).Error; err != nil {
+	album, err := findAlbumByID(req.AlbumID)
+	if err != nil {
 		return c.JSON(http.StatusNotFound, map[string]string{"message": "Album not found"})
 	}
 
-	// Append the album to the user's liked albums
-	if err := initializers.DB.Model(&user).Association("LikedAlbums").Append(&album).Error; err != nil {
+	if err := likeAlbum(&user, &album); err != nil {
 		return c.JSON(http.StatusInternalServerError, map[string]string{"message": "Could not like album"})
 	}
 
 	return c.JSON(http.StatusOK, map[string]string{"message": "Album liked successfully"})
+}
+
+func findUserByID(userID string) (models.User, error) {
+	var user models.User
+	if err := initializers.DB.First(&user, "id = ?", userID).Error; err != nil {
+		return user, err
+	}
+	return user, nil
+}
+
+func findAlbumByID(albumID string) (models.Album, error) {
+	var album models.Album
+	if err := initializers.DB.First(&album, "id = ?", albumID).Error; err != nil {
+		return album, err
+	}
+	return album, nil
+}
+
+func likeAlbum(user *models.User, album *models.Album) error {
+	// Start a transaction
+	tx := initializers.DB.Begin()
+	defer func() {
+		if r := recover(); r != nil {
+			tx.Rollback()
+		}
+	}()
+
+	if err := tx.Model(user).Association("LikedAlbums").Append(album); err != nil {
+		tx.Rollback()
+		return err
+	}
+
+	return tx.Commit().Error
 }

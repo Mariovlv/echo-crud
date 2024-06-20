@@ -8,17 +8,25 @@ import (
 )
 
 func InitRoutes(e *echo.Echo) {
-	e.GET("/api/v1/albums", controllers.GetAlbums, middlewares.RequireAuth)
-	e.POST("api/v1/albums", controllers.PostAlbum)
-	e.GET("api/v1/albums/:id", controllers.GetAlbumByID, middlewares.RequireAuth)
-	e.GET("/ping", controllers.Pong)
+	// Public routes
+	e.GET("/ping", controllers.Pong) // Ping endpoint for testing
 
-	e.GET("api/v1/likedby/:id", controllers.GetAlbumsLikedBy)
-	e.POST("api/v1/likedby/:user_id/:album_id", controllers.LikeAlbumBy, middlewares.RequireAuth)
+	apiV1 := e.Group("/api/v1")
 
-	e.GET("api/v1/users/:id", controllers.GetUserByID, middlewares.RequireAuth)
+	// User routes
+	apiV1.POST("/signup", controllers.CreateUser)                          // Signup endpoint
+	apiV1.POST("/login", controllers.Login)                                // Login endpoint
+	apiV1.POST("/validate", controllers.Validate, middlewares.RequireAuth) // Validate token endpoint
 
-	e.POST("/signup", controllers.CreateUser)
-	e.POST("/api/v1/login", controllers.Login)
-	e.POST("/validate", controllers.Validate, middlewares.RequireAuth)
+	// Album routes
+	apiV1.GET("/albums", controllers.GetAlbums, middlewares.RequireAuth)        // Get all albums endpoint
+	apiV1.POST("/albums", controllers.PostAlbum)                                // Create album endpoint
+	apiV1.GET("/albums/:id", controllers.GetAlbumByID, middlewares.RequireAuth) // Get album by ID endpoint
+
+	// Liked by routes
+	apiV1.GET("/likedby/:id", controllers.GetAlbumsLikedBy)                  // Get liked albums endpoint
+	apiV1.POST("/likedby", controllers.LikeAlbumBy, middlewares.RequireAuth) // Like album endpoint
+
+	// User profile route
+	apiV1.GET("/users/:id", controllers.GetUserByID, middlewares.RequireAuth) // Get user by ID endpoint
 }

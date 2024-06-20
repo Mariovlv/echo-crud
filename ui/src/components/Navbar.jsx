@@ -1,24 +1,26 @@
-// src/components/Navbar.js
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { getUserByID } from "../api/albums";
 
 function Navbar({ userID }) {
-  const [userInfo, setUserInfo] = useState("");
+  const [userInfo, setUserInfo] = useState({ id: "", email: "" }); // Initialize userInfo as an object
 
   useEffect(() => {
     const fetchUser = async () => {
       try {
+        console.log(userID);
         const response = await getUserByID(userID);
-        setUserInfo(response.data);
+        setUserInfo({ id: response.data.id, email: response.data.email }); // Update userInfo with the correct property names
         console.log(response);
       } catch (error) {
-        console.error("Error fetching album:", error);
+        console.error("Error fetching user:", error);
       }
     };
 
-    fetchUser();
-  }, []);
+    if (userID) {
+      fetchUser();
+    }
+  }, [userID]); // Add userID to the dependency array
 
   return (
     <nav className="bg-gray-800 p-4">
@@ -37,9 +39,9 @@ function Navbar({ userID }) {
             Login
           </Link>
         </div>
-        {userInfo && (
+        {userInfo.id && ( // Check if userInfo.id exists before rendering
           <div className="text-white">
-            <span className="mr-4">ID: {userInfo.ID}</span>
+            <span className="mr-4">ID: {userInfo.id}</span>
             <span>Email: {userInfo.email}</span>
           </div>
         )}
