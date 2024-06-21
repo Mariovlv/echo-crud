@@ -32,6 +32,7 @@ func (a *Album) BeforeSave(tx *gorm.DB) (err error) {
 type User struct {
 	gorm.Model
 	Email    string   `gorm:"not null; unique" json:"email"`
+	Username string   `gorm:"not null; unique" json:"username"`
 	Password string   `gorm:"not null" json:"password"`
 	Albums   []*Album `gorm:"many2many:user_albums;" json:"albums"`
 }

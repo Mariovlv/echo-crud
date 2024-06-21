@@ -83,6 +83,7 @@ func CreateUser(c echo.Context) error {
 	var body struct {
 		Email    string
 		Password string
+		Username string
 	}
 
 	if c.Bind(&body) != nil {
@@ -94,7 +95,7 @@ func CreateUser(c echo.Context) error {
 		return c.String(http.StatusBadRequest, "failing hashing the password")
 	}
 	// create the user, write on the db
-	user := models.User{Password: string(hash), Email: body.Email}
+	user := models.User{Password: string(hash), Email: body.Email, Username: body.Username}
 	result := initializers.DB.Create(&user)
 	if result.Error != nil {
 		return c.String(http.StatusBadRequest, "error: user already exists with same  email")

@@ -40,9 +40,9 @@ This project is a CRUD application built with Go (Echo framework) and connected 
 
 ### Next
 
-- [ ] Improve UI
+- [x] Improve UI
 - [x] Connect PostgreSQL
-- [ ] Complete API operations
+- [x] Complete API operations
 - [x] Login and register
-- [ ] Fix login, register and validate routes
-- [ ] Fix middlewares
+- [x] Fix login, register and validate routes
+- [x] Fix middlewares
