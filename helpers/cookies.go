@@ -8,7 +8,7 @@ import (
 )
 
 func WriteCookie(c echo.Context, cook string) {
-	expiration := time.Now().Add(365 * 24 * time.Hour)
+	expiration := time.Now().Add(time.Hour * 1)
 	cookie := http.Cookie{Name: "Authorization", Value: cook, Expires: expiration, HttpOnly: true, Secure: false}
 	c.SetCookie(&cookie)
 

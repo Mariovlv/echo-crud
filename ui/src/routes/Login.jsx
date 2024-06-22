@@ -1,17 +1,22 @@
-import React, { useState } from "react";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { loginUser } from "../api/users";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       const response = await loginUser(email, password);
       console.log(response);
+      // Assuming the login was successful, redirect to the home page
+      navigate("/");
     } catch (error) {
       console.error("Login failed:", error);
+      // You might want to show an error message to the user here
     }
   };
 

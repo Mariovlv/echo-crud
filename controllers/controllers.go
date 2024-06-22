@@ -145,7 +145,7 @@ func Login(c echo.Context) error {
 
 	helpers.WriteCookie(c, tokenString)
 
-	return c.String(http.StatusCreated, "User authenticated correctly")
+	return c.JSON(http.StatusOK, user)
 }
 
 func Validate(c echo.Context) error {
@@ -226,7 +226,8 @@ func likeAlbum(user *models.User, album *models.Album) error {
 		}
 	}()
 
-	if err := tx.Model(user).Association("LikedAlbums").Append(album); err != nil {
+	// Create the join table entry explicitly
+	if err := tx.Exec("INSERT INTO user_albums(user_id, album_id) VALUES (?, ?)", user.ID, album.ID).Error; err != nil {
 		tx.Rollback()
 		return err
 	}

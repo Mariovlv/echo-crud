@@ -12,6 +12,9 @@ const AlbumDetail = () => {
     users: [],
   });
 
+  const currentUser = JSON.parse(localStorage.getItem("user"));
+  console.log(currentUser);
+
   useEffect(() => {
     const fetchAlbum = async () => {
       try {
@@ -51,7 +54,14 @@ const AlbumDetail = () => {
             </p>
             <p className="mt-2 text-gray-700">Title: {album.title}</p>
             <p className="mt-2 text-gray-700">Artist: {album.artist}</p>
-            <AlbumLikesBy users={users} />
+            <AlbumLikesBy
+              users={users}
+              currentUser={{
+                id: currentUser.ID,
+                username: currentUser.username,
+              }}
+              albumId={album.id}
+            />
           </>
         )}
       </div>

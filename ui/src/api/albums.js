@@ -11,8 +11,9 @@ const getAlbumById = (id) => {
 };
 
 const postLike = (userID, albumID) => {
+  console.log("fetching with", userID, albumID);
   return axios.post(`${BASE_URL}/likedby`, {
-    user_id: userID,
+    user_id: String(userID),
     album_id: albumID,
   });
 };
